@@ -1,162 +1,15 @@
 from PIL import Image
 from PIL import Image, ImageOps
 from PIL import ImageFilter
+from PIL import UnidentifiedImageError
 
 import numpy as np
 import sys
 import time
 import os
 
-class edytorObrazow:
-    def __init__(self):
-        self.obraz = None
-        self.oryginalny_obraz = None
-##1. Wczytywanie
-    def zaladuj_obraz(self, sciezka):
-        try:
-            self.obraz = Image.open(sciezka)
-            self.oryginalny_obraz = self.obraz.copy()
-            print("Obraz został wczytany.")
-        except FileNotFoundError:
-            print("Nie znaleziono pliku.")
-##2. Zapisywanie
-    def zapisz_obraz(self, sciezka):
-        if self.obraz is not None:
-            try:
-                self.obraz.save(sciezka)
-                print("Obraz został zapisany.")
-                input("Otwieram zapisane zdjecie")
-                os.system('start ' + sciezka)
-            except:
-                print("Wystąpił błąd podczas zapisywania obrazu.")
-        else:
-            print("Nie wczytano żadnego obrazu.")
-##3. Podglad
-    def pokaz_obraz(self):
-        if self.obraz is not None:
-            try:
-                self.obraz.show()
-            except:
-                print("Nie wczytano żadnego obrazu.")
-##4. Transformacja przestrzeni barw
-    def przestrzen_barw(self):
-        if self.obraz is not None:
-            try:
-                self.obraz = self.obraz.convert('RGB')
-                print("Przekształcono przestrzeń barw.")
-            except:
-                print("Wystąpił błąd podczas przekształcania przestrzeni barw.")
-        else:
-            print("Nie wczytano żadnego obrazu.")
-##5. Negatyw
-    def negatyw(self):
-        if self.obraz is not None:
-            try:
-                self.obraz = ImageOps.invert(self.obraz)
-                print("Zastosowano negatyw.")
-            except:
-                print("Wystąpił błąd podczas stosowania negatywu.")
-        else:
-            print("Nie wczytano żadnego obrazu.")
-##6. Binaryzacja
-    def binaryzacja(self, wartosc):
-        if self.obraz is not None:
-            try:
-                ##Konwersja do skali szarości
-                self.obraz = self.obraz.convert('L')
-                ##piksele ponizej wartosci $wartosc$, otrzymuja wartosc 0, powyzej niej otrzymuja wartosc 255
-                self.obraz = self.obraz.point(lambda x: 0 if x < wartosc else 255, '1')
-                print("Zastosowano binaryzację.")
-            except:
-                print("Wystąpił błąd podczas stosowania binaryzacji.")
-        else:
-            print("Nie wczytano żadnego obrazu.")
-##7. Erozja
-    def erozja(self):
-        if self.obraz is not None:
-            try:
-                ##Filtr minimalny, wybiera najmniejsza wartosc piksela w oknie o rozmiarze 3
-                self.obraz = self.obraz.filter(ImageFilter.MinFilter(3))
-                print("Zastosowano erozję.")
-            except:
-                print("Wystąpił błąd podczas stosowania erozji.")
-        else:
-            print("Nie wczytano żadnego obrazu.")
-##8. Otwarcie
-    def otwarcie(self):
-        if self.obraz is not None:
-            try:
-                self.obraz = self.obraz.filter(ImageFilter.MinFilter(3))
-                self.obraz = self.obraz.filter(ImageFilter.MaxFilter(3))
-                print("Zastosowano otwarcie.")
-            except:
-                print("Wystąpił błąd podczas stosowania otwarcia.")
-        else:
-            print("Nie wczytano żadnego obrazu.")
-##9. Domknięcie
-    def domkniecie(self):
-        if self.obraz is not None:
-            try:
-                ##Filtr minimalny, maksymalny wybiera najmniejsza/ najwieksza wartosc piksela w oknie o rozmiarze 3
-                self.obraz = self.obraz.filter(ImageFilter.MaxFilter(3))
-                self.obraz = self.obraz.filter(ImageFilter.MinFilter(3))
-                print("Zastosowano domknięcie.")
-            except:
-                print("Wystąpił błąd podczas stosowania domknięcia.")
-        else:
-            print("Nie wczytano żadnego obrazu.")
-##10. Filtr
-    def filtr(self, nazwa_filtru):
-        if self.obraz is not None:
-            try:
-                if nazwa_filtru == 'rozmycie':
-                    self.obraz = self.obraz.filter(ImageFilter.BLUR)
-                elif nazwa_filtru == 'szczegolowosc':
-                    self.obraz = self.obraz.filter(ImageFilter.DETAIL)
-                elif nazwa_filtru == 'krawedz':
-                    self.obraz = self.obraz.filter(ImageFilter.FIND_EDGES)
-                elif nazwa_filtru == 'wyostrz':
-                    self.obraz = self.obraz.filter(ImageFilter.SHARPEN)
-                else:
-                    print("Nieznany filtr.")
-                    return
-                print("Zastosowano filtr: {}".format(nazwa_filtru))
-            except:
-                print("Wystąpił błąd podczas stosowania filtru.")
-        else:
-            print("Nie wczytano żadnego obrazu.")
-##11. Wyrównanie histogramu
-    def histogram(self):
-        if self.obraz is not None:
-            try:
-                self.obraz = ImageOps.equalize(self.obraz)
-                print("Wyrównano histogram.")
-            except:
-                print("Wystąpił błąd podczas wyrównywania histogramu.")
-        else:
-            print("Nie wczytano żadnego obrazu.")
-##12. Kompresja
-    def kompresuj(self, jakosc):
-        if self.obraz is not None:
-            try:
-                self.obraz.save("temp.jpg", "JPEG", jakosc=jakosc)
-                self.obraz = Image.open("temp.jpg")
-                print("Zastosowano kompresję.")
-            except:
-                print("Wystąpił błąd podczas kompresji.")
-        else:
-            print("Nie wczytano żadnego obrazu.")
-##13. Wygładzanie
-    def wygladz(self):
-        if self.obraz is not None:
-            try:
-                self.obraz = self.obraz.filter(ImageFilter.SMOOTH)
-                print("Zastosowano wygładzanie.")
-            except:
-                print("Wystąpił błąd podczas stosowania wygładzania.")
-        else:
-            print("Nie wczytano żadnego obrazu.")
-##14. Pomoc
+class obslugaProgramu:
+##Pomoc
     def help(self):
         print("")
         print("1. Transformacja przestrzeni barw")
@@ -179,7 +32,7 @@ class edytorObrazow:
             case '2':
                 print("Negatyw w edycji zdjęć to proces zmiany kolorów zdjęcia na przeciwne")
             case '3':
-                print("Przeprowadzenie procesu binaryzacji polega na tym, aby obraz mający wiele poziomów szarości zmienić na obraz, którego piksele mają wyłącznie wartości i .")
+                print("Przeprowadzenie procesu binaryzacji polega na tym, aby obraz mający wiele poziomów szarości zmienić na obraz, którego piksele mają wyłącznie wartości 1 i 0.")
             case '4':
                 print("Erozja w edycji zdjęć to proces usuwania pikseli z obrazu. W wyniku erozji obraz staje się mniejszy i mniej szczegółowy. Polega na przyłożeniu elementu strukturalnego do każdego z pikseli i jeżeli któremuś elementowi o wartości 1 na obiekcie strukturalnym odpowiada wartość 0 na obrazie, wówczas piksel obrazu znajdujący się w tej samej pozycji co środek elementu strukturalnego otrzymuje wartość 0.")
             case '5':
@@ -206,44 +59,222 @@ class edytorObrazow:
                 time.sleep(0.05)
             print("")
             input("")
-
+##Blad nie wczytano obrazu
+    def blad(self):
+        print("Nie wczytano żadnego obrazu.")
+##Wystapil blad
+    def wystapilBlad(self, tekst):
+        print("Wystąpił błąd podczas operacji " + str(tekst))
 ##Menu programu
-def menu():
-    print("1. Wczytaj obraz")
-    print("2. Zapisz obraz")
-    print("3. Podejrzyj obraz")
-    print("4. Transformacja przestrzeni barw")
-    print("5. Negatyw")
-    print("6. Binaryzacja")
-    print("7. Erozja")
-    print("8. Otwarcie")
-    print("9. Domknięcie")
-    print("10. Filtr")
-    print("11. Wyrównanie histogramu")
-    print("12. Kompresja")
-    print("13. Wygładzanie")
-    print("14. Pomoc")
-    print("15. O")
-    print("0. Wyjście")
+    def menu(self):
+        print("1. Wczytaj obraz")
+        print("2. Zapisz obraz")
+        print("3. Podejrzyj obraz")
+        print("4. Transformacja przestrzeni barw")
+        print("5. Negatyw")
+        print("6. Binaryzacja")
+        print("7. Erozja")
+        print("8. Otwarcie")
+        print("9. Domknięcie")
+        print("10. Filtr")
+        print("11. Wyrównanie histogramu")
+        print("12. Kompresja")
+        print("13. Wygładzanie")
+        print("14. Pomoc")
+        print("15. O")
+        print("0. Wyjście")
 ##Logo programu
-def logo():
-    print("$$$$$$$\  $$\                  $$\                     $$$$$$$$\      $$\ $$\   $$\                         ")
-    print("$$  __$$\ $$ |                 $$ |                    $$  _____|     $$ |\__|  $$ |                        ")
-    print("$$ |  $$ |$$$$$$$\   $$$$$$\ $$$$$$\    $$$$$$\        $$ |      $$$$$$$ |$$\ $$$$$$\    $$$$$$\   $$$$$$\  ")
-    print("$$$$$$$  |$$  __$$\ $$  __$$\\_$$  _|  $$  __$$\       $$$$$\   $$  __$$ |$$ |\_$$  _|  $$  __$$\ $$  __$$\ ")
-    print("$$  ____/ $$ |  $$ |$$ /  $$ | $$ |    $$ /  $$ |      $$  __|  $$ /  $$ |$$ |  $$ |    $$ /  $$ |$$ |  \__|")
-    print("$$ |      $$ |  $$ |$$ |  $$ | $$ |$$\ $$ |  $$ |      $$ |     $$ |  $$ |$$ |  $$ |$$\ $$ |  $$ |$$ |      ")
-    print("$$ |      $$ |  $$ |\$$$$$$  | \$$$$  |\$$$$$$  |      $$$$$$$$\\$$$$$$$ |$$ |  \$$$$  |\$$$$$$  |$$ |      ")
-    print("\__|      \__|  \__| \______/   \____/  \______/       \________|\_______|\__|   \____/  \______/ \__|      ")
-    print()
-                                                                                                    
+    def logo(self):
+        print("$$$$$$$\  $$\                  $$\                     $$$$$$$$\      $$\ $$\    $$\                             ")
+        print("$$  __$$\ $$ |                 $$ |                    $$  _____|     $$ |\__|   $$ |                            ")
+        print("$$ |  $$ |$$$$$$$\   $$$$$$\ $$$$$$\    $$$$$$\        $$ |      $$$$$$$ |$$\    $$$$$$\    $$$$$$\   $$$$$$\    ")
+        print("$$$$$$$  |$$  __$$\ $$  __$$\\_$$  _|  $$  __$$\       $$$$$\   $$  __$$ |$$ |\_$$  _|   $$  __$$\ $$  __$$\     ")
+        print("$$  ____/ $$ |  $$ |$$ /  $$ | $$ |    $$ /  $$ |      $$  __|  $$ /  $$ |$$ |  $$ |     $$ /  $$ |$$ |  \__|    ")
+        print("$$ |      $$ |  $$ |$$ |  $$ | $$ |$$\ $$ |  $$ |      $$ |     $$ |  $$ |$$ |  $$ |$$\  $$ |  $$ |$$ |          ")
+        print("$$ |      $$ |  $$ |\$$$$$$  | \$$$$  |\$$$$$$  |      $$$$$$$$\\$$$$$$$ |$$ |  \$$$$  | \$$$$$$  |$$ |          ")
+        print("\__|      \__|  \__| \______/   \____/  \______/       \________|\_______|\__|       \____/  \______/ \__|       ")
+        print()
+     
+
+
+
+class edytorObrazow(obslugaProgramu):
+    def __init__(self):
+        self.obraz = None
+        self.__oryginalny_obraz = None
+##1. Wczytywanie
+    def zaladuj_obraz(self, sciezka):
+        try:
+            self.obraz = Image.open(sciezka)
+            self.__oryginalny_obraz = self.obraz.copy()
+            print("Obraz został wczytany.")
+        except FileNotFoundError:
+            print("Nie znaleziono pliku.")
+        except UnidentifiedImageError:
+            print("To zapewne nie jest obraz.")
+        except OSError:
+            print("Zapewne podałeś złą ścieżkę do obrazu.")
+        except Exception as e:
+            print("Wystapil blad.")
+##2. Zapisywanie
+    def zapisz_obraz(self, sciezka):
+        if self.obraz is not None:
+            try:
+                self.obraz.save(sciezka)
+                print("Obraz został zapisany.")
+                input("Otwieram zapisane zdjecie")
+                os.system('start ' + sciezka)
+            except:
+                self.wystapilBlad("zapisywania obrazu.")
+        else:
+            self.blad()
+##3. Podglad
+    def pokaz_obraz(self):
+        if self.obraz is not None:
+            try:
+                self.obraz.show()
+            except:
+                self.blad()
+        else:
+            self.blad()
+##4. Transformacja przestrzeni barw
+    def przestrzen_barw(self):
+        if self.obraz is not None:
+            try:
+                self.obraz = self.obraz.convert('RGB')
+                print("Przekształcono przestrzeń barw.")
+            except:
+                self.wystapilBlad("przekształcania przestrzeni barw.")
+        else:
+            self.blad()
+##5. Negatyw
+    def negatyw(self):
+        if self.obraz is not None:
+            try:
+                self.obraz = ImageOps.invert(self.obraz)
+                print("Zastosowano negatyw.")
+            except:
+                self.wystapilBlad("stosowania negatywu.")
+        else:
+            self.blad()
+##6. Binaryzacja
+    def binaryzacja(self, wartosc):
+        if self.obraz is not None:
+            try:
+                ##Konwersja do skali szarości
+                self.obraz = self.obraz.convert('L')
+                ##piksele ponizej wartosci $wartosc$, otrzymuja wartosc 0, powyzej niej otrzymuja wartosc 255
+                self.obraz = self.obraz.point(lambda x: 0 if x < wartosc else 255, '1')
+                print("Zastosowano binaryzację.")
+            except:
+                self.wystapilBlad("stosowania binaryzacji.")
+        else:
+            self.blad()
+##7. Erozja
+    def erozja(self, rozmiar):
+        if self.obraz is not None:
+            try:
+                ##Filtr minimalny, wybiera najmniejsza wartosc piksela w oknie o rozmiarze $rozmiar
+                self.obraz = self.obraz.filter(ImageFilter.MinFilter((rozmiar)))
+                print("Zastosowano erozję.")
+            except:
+                self.wystapilBlad("stosowania erozji.")
+        else:
+            self.blad()
+##8. Otwarcie
+    def otwarcie(self):
+        if self.obraz is not None:
+            try:
+                ##Filtr najpierw minimalny potem maksymalny wybiera najmniejsza/ najwieksza wartosc piksela w oknie o rozmiarze 3
+                self.obraz = self.obraz.filter(ImageFilter.MinFilter(3))
+                self.obraz = self.obraz.filter(ImageFilter.MaxFilter(3))
+                print("Zastosowano otwarcie.")
+            except:
+                self.wystapilBlad("stosowania otwarcia.")
+        else:
+            self.blad()
+##9. Domknięcie
+    def domkniecie(self):
+        if self.obraz is not None:
+            try:
+                ##Filtr najpierw maksymalny potem minimalny wybiera najmniejsza/ najwieksza wartosc piksela w oknie o rozmiarze 3
+                self.obraz = self.obraz.filter(ImageFilter.MaxFilter(3))
+                self.obraz = self.obraz.filter(ImageFilter.MinFilter(3))
+                print("Zastosowano domknięcie.")
+            except:
+                self.wystapilBlad("stosowania domknięcia.")
+        else:
+            self.blad()
+##10. Filtr
+    def filtr(self, nazwa_filtru):
+        if self.obraz is not None:
+            try:
+                if nazwa_filtru == 'rozmycie':
+                    self.obraz = self.obraz.filter(ImageFilter.BLUR)
+                elif nazwa_filtru == 'szczegolowosc':
+                    self.obraz = self.obraz.filter(ImageFilter.DETAIL)
+                elif nazwa_filtru == 'krawedz':
+                    self.obraz = self.obraz.filter(ImageFilter.FIND_EDGES)
+                elif nazwa_filtru == 'wyostrz':
+                    self.obraz = self.obraz.filter(ImageFilter.SHARPEN)
+                else:
+                    print("Nieznany filtr.")
+                    return
+                print("Zastosowano filtr: {}".format(nazwa_filtru))
+            except:
+                self.wystapilBlad("stosowania filtru.")
+        else:
+            self.blad()
+##11. Wyrównanie histogramu
+    def histogram(self):
+        if self.obraz is not None:
+            try:
+                self.obraz = ImageOps.equalize(self.obraz)
+                print("Wyrównano histogram.")
+            except:
+                self.wystapilBlad("wyrównywania histogramu.")
+        else:
+            self.blad()
+##12. Kompresja
+    def kompresuj(self, jakosc, format):
+        if self.obraz is not None:
+            try:
+                self.obraz.save("temp.jpg", format, quality=jakosc)
+                self.obraz = Image.open("temp.jpg")
+                print("Zastosowano kompresję.")
+            except:
+                self.wystapilBlad("kompresji.")
+        else:
+            self.blad()
+##13. Wygładzanie
+    def wygladz(self):
+        if self.obraz is not None:
+            try:
+                self.obraz = self.obraz.filter(ImageFilter.SMOOTH)
+                print("Zastosowano wygładzanie.")
+            except:
+                self.wystapilBlad("stosowania wygładzania.")
+        else:
+            self.blad()
+##14. Reset
+    def reset(self):
+        if self.obraz is not None:
+            try:
+                self.obraz = self.__oryginalny_obraz
+                print("Wykonano reset zmian na twoim obrazie.")
+            except:
+                self.wystapilBlad("resetowania zmian na twoim obrazie!")
+        else:
+            self.blad()
+
+                                                                                               
 
 def main():
     edytor = edytorObrazow()
-    logo()
+    edytor.logo()
 
     while True:
-        menu()
+        edytor.menu()
         wybor = input("Wybierz operację: ")
         
         match wybor:
@@ -260,10 +291,17 @@ def main():
             case '5':
                 edytor.negatyw()
             case '6':
-                wartosc = int(input("Podaj próg binaryzacji: "))
-                edytor.binaryzacja(wartosc)
+                try:
+                    wartosc = int(input("Podaj próg binaryzacji: "))
+                    edytor.binaryzacja(wartosc)
+                except:
+                    print("Wpisano zla liczbe")
             case '7':
-                edytor.erozja()
+                try:
+                    rozmiar = int(input("Podaj rozmiar dla erozji (liczba całkowita od 1 do 9): "))
+                    edytor.erozja(rozmiar)
+                except:
+                    print("Wpisano zla liczbe")
             case '8':
                 edytor.otwarcie()
             case '9':
@@ -275,13 +313,14 @@ def main():
                 edytor.histogram()
             case '12':
                 jakosc = int(input("Podaj jakość kompresji (0-100): "))
-                edytor.kompresuj(jakosc)
+                format = int(input("Podaj format w jakim chcesz zapisac obraz"))
+                edytor.kompresuj(format, jakosc)
             case '13':
                 edytor.wygladz()
             case '14':
                 edytor.help()
             case '15':
-                logo()
+                edytor.logo()
                 edytor.o()
             case '0':
                 print("Bye.")
@@ -291,6 +330,5 @@ def main():
 
         print()
 
-
-if __name__ == '__main__':
-    main()
+##start programu
+main()
