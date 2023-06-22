@@ -85,19 +85,17 @@ class obslugaProgramu:
         print("0. Wyjście")
 ##Logo programu
     def logo(self):
-        print("$$$$$$$\  $$\                  $$\                     $$$$$$$$\      $$\ $$\    $$\                             ")
-        print("$$  __$$\ $$ |                 $$ |                    $$  _____|     $$ |\__|   $$ |                            ")
-        print("$$ |  $$ |$$$$$$$\   $$$$$$\ $$$$$$\    $$$$$$\        $$ |      $$$$$$$ |$$\    $$$$$$\    $$$$$$\   $$$$$$\    ")
-        print("$$$$$$$  |$$  __$$\ $$  __$$\\_$$  _|  $$  __$$\       $$$$$\   $$  __$$ |$$ |\_$$  _|   $$  __$$\ $$  __$$\     ")
-        print("$$  ____/ $$ |  $$ |$$ /  $$ | $$ |    $$ /  $$ |      $$  __|  $$ /  $$ |$$ |  $$ |     $$ /  $$ |$$ |  \__|    ")
-        print("$$ |      $$ |  $$ |$$ |  $$ | $$ |$$\ $$ |  $$ |      $$ |     $$ |  $$ |$$ |  $$ |$$\  $$ |  $$ |$$ |          ")
-        print("$$ |      $$ |  $$ |\$$$$$$  | \$$$$  |\$$$$$$  |      $$$$$$$$\\$$$$$$$ |$$ |  \$$$$  | \$$$$$$  |$$ |          ")
-        print("\__|      \__|  \__| \______/   \____/  \______/       \________|\_______|\__|       \____/  \______/ \__|       ")
+        print(" _______   __                    __                      ________        __  __    __                          ")
+        print("|       \ |  \                  |  \                    |        \      |  \|  \  |  \                         ")
+        print("| $$$$$$$\| $$____    ______   _| $$_     ______        | $$$$$$$$  ____| $$ \$$ _| $$_     ______    ______   ")
+        print("| $$__/ $$| $$    \  /      \ |   $$ \   /      \       | $$__     /      $$|  \|   $$ \   /      \  /      \  ")
+        print("| $$    $$| $$$$$$$\|  $$$$$$\ \$$$$$$  |  $$$$$$\      | $$  \   |  $$$$$$$| $$ \$$$$$$  |  $$$$$$\|  $$$$$$\ ")
+        print("| $$$$$$$ | $$  | $$| $$  | $$  | $$ __ | $$  | $$      | $$$$$   | $$  | $$| $$  | $$ __ | $$  | $$| $$   \$$ ")
+        print("| $$      | $$  | $$| $$__/ $$  | $$|  \| $$__/ $$      | $$_____ | $$__| $$| $$  | $$|  \| $$__/ $$| $$       ")
+        print("| $$      | $$  | $$ \$$    $$   \$$  $$ \$$    $$      | $$     \ \$$    $$| $$   \$$  $$ \$$    $$| $$       ")
+        print(" \$$       \$$   \$$  \$$$$$$     \$$$$   \$$$$$$        \$$$$$$$$  \$$$$$$$ \$$    \$$$$   \$$$$$$  \$$       ")
         print()
      
-
-
-
 class edytorObrazow(obslugaProgramu):
     def __init__(self):
         self.obraz = None
@@ -163,7 +161,7 @@ class edytorObrazow(obslugaProgramu):
             try:
                 ##Konwersja do skali szarości
                 self.obraz = self.obraz.convert('L')
-                ##piksele ponizej wartosci $wartosc$, otrzymuja wartosc 0, powyzej niej otrzymuja wartosc 255
+                ##piksele ponizej wartosci $wartosc$, otrzymuja wartosc 0, powyzej niej otrzymuja wartosc 1
                 self.obraz = self.obraz.point(lambda x: 0 if x < wartosc else 255, '1')
                 print("Zastosowano binaryzację.")
             except:
@@ -267,9 +265,7 @@ class edytorObrazow(obslugaProgramu):
         else:
             self.blad()
 
-                                                                                               
-
-def main():
+def program():
     edytor = edytorObrazow()
     edytor.logo()
 
@@ -329,6 +325,9 @@ def main():
                 print("Nieprawidłowy wybór.")
 
         print()
+
+def main():
+    program()
 
 ##start programu
 main()
